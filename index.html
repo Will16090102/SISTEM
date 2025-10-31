@@ -1,1030 +1,1166 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SeaGroup - Plataforma de Importaciones</title>
-  <style>
-    :root {
-      --bg: #0f1724;
-      --card: #0b1220;
-      --accent: #06b6d4;
-      --muted: #9ca3af;
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-    }
-    
-    * {
-      box-sizing: border-box;
-      font-family: Inter, system-ui, Segoe UI, Roboto, 'Helvetica Neue', Arial;
-    }
-    
-    body {
-      margin: 0;
-      background: linear-gradient(180deg, #071029 0%, #081427 60%);
-      color: #e6eef6;
-      min-height: 100vh;
-    }
-    
-    /* Login Screen */
-    .login-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-    
-    .login-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 12px;
-      padding: 30px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    }
-    
-    .login-logo {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    
-    .logo-large {
-      width: 70px;
-      height: 70px;
-      background: linear-gradient(135deg, #06b6d4, #7c3aed);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 24px;
-      margin: 0 auto 15px;
-    }
-    
-    .login-title {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 5px;
-      text-align: center;
-    }
-    
-    .login-subtitle {
-      color: var(--muted);
-      text-align: center;
-      margin-bottom: 25px;
-    }
-    
-    .login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    
-    .form-label {
-      font-size: 14px;
-      font-weight: 500;
-    }
-    
-    .form-input {
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.05);
-      color: inherit;
-      font-size: 14px;
-    }
-    
-    .form-input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    
-    .user-type-selector {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    
-    .user-type {
-      flex: 1;
-      text-align: center;
-      padding: 12px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .user-type.selected {
-      background: rgba(6, 182, 212, 0.15);
-      border-color: var(--accent);
-    }
-    
-    .btn {
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .btn-primary {
-      background: linear-gradient(90deg, var(--accent), #7c3aed);
-      color: #031025;
-    }
-    
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.05);
-      color: inherit;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    /* Dashboard */
-    .dashboard {
-      display: none;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-    
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 24px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    }
-    
-    .brand {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    
-    .logo {
-      width: 44px;
-      height: 44px;
-      background: linear-gradient(135deg, #06b6d4, #7c3aed);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      font-weight: 700;
-    }
-    
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .user-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-    }
-    
-    .layout {
-      display: grid;
-      grid-template-columns: 320px 1fr 360px;
-      gap: 18px;
-      padding: 20px;
-      flex: 1;
-    }
-    
-    .panel {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      padding: 16px;
-      border-radius: 12px;
-      min-height: 120px;
-    }
-    
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    
-    .stat-card {
-      background: rgba(255, 255, 255, 0.02);
-      border-radius: 8px;
-      padding: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-    }
-    
-    .stat-value {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 5px;
-    }
-    
-    .stat-label {
-      font-size: 12px;
-      color: var(--muted);
-    }
-    
-    .search {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 15px;
-    }
-    
-    input[type=text] {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      background: transparent;
-      color: inherit;
-    }
-    
-    /* Kanban */
-    .kanban {
-      display: flex;
-      gap: 12px;
-      overflow: auto;
-      padding-bottom: 12px;
-    }
-    
-    .col {
-      min-width: 260px;
-      background: rgba(255, 255, 255, 0.02);
-      padding: 12px;
-      border-radius: 10px;
-    }
-    
-    .col h3 {
-      margin: 0 0 10px 0;
-      font-size: 13px;
-    }
-    
-    .card {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      cursor: grab;
-    }
-    
-    .card .meta {
-      font-size: 12px;
-      color: var(--muted);
-    }
-    
-    .timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    
-    .event {
-      padding: 10px;
-      border-radius: 8px;
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.02);
-    }
-    
-    .small {
-      font-size: 12px;
-      color: var(--muted);
-    }
-    
-    /* detail right */
-    .detail {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    
-    .detail .section {
-      padding: 12px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.03);
-    }
-    
-    .badge {
-      display: inline-block;
-      padding: 6px 8px;
-      border-radius: 999px;
-      font-size: 12px;
-    }
-    
-    .status-Borrador {
-      background: rgba(255, 255, 255, 0.03);
-    }
-    
-    .status-Embarque {
-      background: linear-gradient(90deg, #f59e0b, #f97316);
-      color: #051018;
-    }
-    
-    .status-Entregado {
-      background: linear-gradient(90deg, #10b981, #059669);
-      color: #02110a;
-    }
-    
-    .status-Liberado {
-      background: linear-gradient(90deg, #60a5fa, #7c3aed);
-      color: #021025;
-    }
-    
-    .footer {
-      padding: 14px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13px;
-    }
-    
-    /* modal */
-    .modal-back {
-      position: fixed;
-      inset: 0;
-      background: rgba(2, 6, 23, 0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-    
-    .modal {
-      width: 720px;
-      background: #031025;
-      padding: 18px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-    
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 13px;
-    }
-    
-    select, textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      background: transparent;
-      color: inherit;
-    }
-    
-    .flex {
-      display: flex;
-      gap: 8px;
-    }
-    
-    .file-preview {
-      font-size: 13px;
-      color: var(--muted);
-    }
-    
-    /* responsive */
-    @media (max-width: 1000px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeaGroup - Plataforma de Importaciones</title>
+    <style>
+        :root {
+            --primary: #06b6d4;
+            --primary-dark: #0891b2;
+            --bg: #0f1724;
+            --card: #0b1220;
+            --muted: #9ca3af;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text: #e6eef6;
+            --border: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Pantalla de Login */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #071029 0%, #081427 100%);
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-weight: 700;
+            font-size: 24px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), #7c3aed);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3);
+        }
+
+        .demo-accounts {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .demo-accounts h3 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: var(--muted);
+        }
+
+        .demo-account {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .demo-account:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .demo-account .role {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .demo-account .credentials {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(11, 18, 32, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .header-info h1 {
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+
+        .header-info p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-details {
+            text-align: right;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        /* Navegación */
+        .nav-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: rgba(11, 18, 32, 0.8);
+            padding: 0 20px;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 15px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Contenido Principal */
+        .main-content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .screen-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .screen-title .badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Panel de Resumen */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            transition: all 0.3s;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .card-label {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        /* Etapas */
+        .stages-container {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stages-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .stages-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .stages-track {
+            display: flex;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            gap: 10px;
+        }
+
+        .stage {
+            min-width: 160px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+
+        .stage.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+        }
+
+        .stage.completed {
+            border-color: var(--success);
+        }
+
+        .stage-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .stage.active .stage-icon {
+            background: rgba(6, 182, 212, 0.2);
+            color: var(--primary);
+        }
+
+        .stage.completed .stage-icon {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .stage-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .stage-date {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* Comentarios */
+        .comments-container {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .comments-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .comment {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comment:last-child {
+            border-bottom: none;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .comment-date {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .comment-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Historial */
+        .shipments-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .shipment-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .shipment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .shipment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .shipment-cuc {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .shipment-status {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .shipment-title {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .shipment-client {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .shipment-dates {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .summary-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .shipments-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .stages-track {
+                flex-direction: column;
+            }
+            
+            .stage {
+                min-width: auto;
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- Login Screen -->
-  <div class="login-container" id="loginScreen">
-    <div class="login-card">
-      <div class="login-logo">
-        <div class="logo-large">SG</div>
-        <h1 class="login-title">SeaGroup</h1>
-        <div class="login-subtitle">Plataforma de Importaciones</div>
-      </div>
-      
-      <div class="user-type-selector">
-        <div class="user-type selected" data-type="cliente">Cliente</div>
-        <div class="user-type" data-type="trabajador">Trabajador</div>
-      </div>
-      
-      <div class="login-form">
-        <div class="form-group">
-          <label class="form-label">Usuario</label>
-          <input type="text" class="form-input" id="username" placeholder="Ingresa tu usuario">
+    <!-- Pantalla de Login -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-container">
+            <div class="logo">
+                <div class="logo-icon">SG</div>
+                <h1>SeaGroup</h1>
+                <p>Plataforma de Importaciones</p>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Usuario</label>
+                <input type="text" class="form-input" id="username" placeholder="Ingresa tu usuario">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Contraseña</label>
+                <input type="password" class="form-input" id="password" placeholder="Ingresa tu contraseña">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Código de acceso</label>
+                <input type="text" class="form-input" id="accessCode" placeholder="Código de 6 dígitos">
+            </div>
+            
+            <button class="btn btn-primary" id="loginBtn">
+                <span>Ingresar a la plataforma</span>
+            </button>
+            
+            <div class="demo-accounts">
+                <h3>Cuentas de demostración:</h3>
+                <div class="demo-account" data-user="cliente" data-pass="cliente123" data-code="111111">
+                    <div class="role">Cliente (Solo lectura)</div>
+                    <div class="credentials">Usuario: cliente | Contraseña: cliente123 | Código: 111111</div>
+                </div>
+                <div class="demo-account" data-user="operador" data-pass="operador123" data-code="222222">
+                    <div class="role">Operador (Edición habilitada)</div>
+                    <div class="credentials">Usuario: operador | Contraseña: operador123 | Código: 222222</div>
+                </div>
+            </div>
         </div>
-        
-        <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <input type="password" class="form-input" id="password" placeholder="Ingresa tu contraseña">
-        </div>
-        
-        <button class="btn btn-primary" id="loginBtn">Ingresar</button>
-      </div>
     </div>
-  </div>
 
-  <!-- Dashboard -->
-  <div class="dashboard" id="dashboard">
-    <header>
-      <div class="brand">
-        <div class="logo">SG</div>
-        <div>
-          <h1>SeaGroup — Plataforma de Importaciones</h1>
-          <div class="small" id="userRoleDisplay">Bienvenido</div>
-        </div>
-      </div>
-      <div class="user-info">
-        <div class="small" id="userNameDisplay">Usuario</div>
-        <div class="user-avatar" id="userAvatar">U</div>
-        <button class="btn btn-secondary" id="logoutBtn">Cerrar Sesión</button>
-      </div>
-    </header>
-
-    <main class="layout">
-      <!-- LEFT: Buscador y filtros -->
-      <aside class="panel">
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-value" id="totalShipments">6</div>
-            <div class="stat-label">Total Operaciones</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="activeShipments">4</div>
-            <div class="stat-label">En Proceso</div>
-          </div>
-        </div>
-        
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
-          <div style="font-weight:600">Buscar por CUC</div>
-        </div>
-        <div class="search">
-          <input id="searchCUC" type="text" placeholder="ej. IMP-2025-0012" />
-          <button class="btn btn-secondary" id="btnSearch">Buscar</button>
-        </div>
-
-        <hr style="opacity:.06;margin:12px 0" />
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-          <div style="font-weight:600">Filtros rápidos</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <label><input type="checkbox" id="onlyMy" /> Mostrar solo mis envíos</label>
-          <label><input type="checkbox" id="delayed" /> Mostrar retrasados</label>
-        </div>
-
-        <hr style="opacity:.06;margin:12px 0" />
-        <div style="font-weight:600;margin-bottom:8px">Atajos</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <button class="btn btn-secondary" id="focusKanban">Ir a Kanban</button>
-          <button class="btn btn-secondary" id="focusTimeline">Ir a Timeline</button>
-        </div>
-
-        <div style="margin-top:14px" class="small">Demo data: 6 envíos · CUC formato IMP-YYYY-XXXX</div>
-      </aside>
-
-      <!-- CENTER: Kanban y timeline -->
-      <section style="display:flex;flex-direction:column;gap:12px">
-        <div class="panel" style="display:flex;flex-direction:column;gap:12px">
-          <div style="display:flex;align-items:center;gap:12px">
-            <h2 style="margin:0;font-size:16px">Pipeline operativo</h2>
-            <div class="small">Arrastra una operación entre columnas para simular transición</div>
-          </div>
-          <div class="kanban" id="kanban"></div>
-        </div>
-
-        <div class="panel">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-            <h2 style="margin:0;font-size:16px">Ficha de envío — Detalle (por CUC)</h2>
-            <div class="small">Selecciona una tarjeta en el Kanban para ver detalles</div>
-          </div>
-          <div style="display:flex;gap:12px">
-            <div style="flex:1">
-              <div class="section" id="detailHeader">
-                <!-- populated by JS -->
-                <div style="text-align:center;padding:20px;color:var(--muted)">
-                  Selecciona una operación para ver los detalles
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <header class="header">
+            <div class="header-left">
+                <div class="header-logo">SG</div>
+                <div class="header-info">
+                    <h1>SeaGroup Importaciones</h1>
+                    <p id="headerRole">Panel de control</p>
                 </div>
-              </div>
-              <div class="section" style="margin-top:10px">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <div style="font-weight:600">Timeline / Eventos</div>
-                  <div class="small">Últimos eventos mostrados</div>
-                </div>
-                <div class="timeline" id="timeline" style="margin-top:8px">
-                  <div style="text-align:center;padding:10px;color:var(--muted)">
-                    No hay eventos para mostrar
-                  </div>
-                </div>
-              </div>
             </div>
-            <div style="width:300px" class="detail">
-              <div class="section">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <div style="font-weight:600">Checklist documental</div>
-                  <div class="small">Estado</div>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-details">
+                    <div class="user-name" id="userName">Usuario</div>
+                    <div class="user-role" id="userRole">Rol</div>
                 </div>
-                <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
-                  <label><input type="checkbox" id="chkBL" /> Bill of Lading</label>
-                  <label><input type="checkbox" id="chkInv" /> Invoice</label>
-                  <label><input type="checkbox" id="chkPck" /> Packing List</label>
-                  <div style="display:flex;gap:8px;margin-top:6px">
-                    <input id="uploadFile" type="file" />
-                    <div class="file-preview" id="fp">Ningún archivo</div>
-                  </div>
-                </div>
-                <div style="margin-top:8px;display:flex;gap:8px">
-                  <button class="btn btn-primary" id="btnChangeStatus">Actualizar estado</button>
-                  <button class="btn btn-secondary" id="btnAddEvent">Añadir evento</button>
-                </div>
-              </div>
-
-              <div class="section">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <div style="font-weight:600">Costos (resumen)</div>
-                  <div class="small">Moneda: USD</div>
-                </div>
-                <div style="margin-top:8px">
-                  <div class="small">CIF estimado: <strong id="costCIF">$0</strong></div>
-                  <div class="small">Costos adicionales: <strong id="costAdd">$0</strong></div>
-                  <div class="small">Total estimado: <strong id="costTotal">$0</strong></div>
-                </div>
-              </div>
+                <button class="btn-logout" id="logoutBtn">Cerrar Sesión</button>
             </div>
-          </div>
-        </div>
-      </section>
+        </header>
 
-      <!-- RIGHT: Actividad y notificaciones -->
-      <aside>
-        <div class="panel">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <div style="font-weight:600">Actividad reciente</div>
-            <div class="small">feed</div>
-          </div>
-          <div id="feed">
-            <div style="text-align:center;padding:10px;color:var(--muted)">
-              No hay actividad reciente
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-screen="resumen">Resumen</div>
+            <div class="nav-tab" data-screen="etapas">Seguimiento</div>
+            <div class="nav-tab" data-screen="historial" id="historialTab">Mi Historial</div>
+            <div class="nav-tab" data-screen="operaciones" id="operacionesTab">Todas las Operaciones</div>
+        </div>
+
+        <div class="main-content">
+            <!-- Pantalla de Resumen -->
+            <div class="screen active" id="resumenScreen">
+                <h2 class="screen-title">Resumen de Importaciones <span class="badge" id="resumenBadge">Cliente</span></h2>
+                
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="card-value" id="totalOperaciones">6</div>
+                        <div class="card-label">Total Operaciones</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-value" id="operacionesActivas">4</div>
+                        <div class="card-label">En Proceso</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-value" id="operacionesCompletadas">2</div>
+                        <div class="card-label">Completadas</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-value" id="operacionesRetrasadas">1</div>
+                        <div class="card-label">Con Retraso</div>
+                    </div>
+                </div>
+
+                <div class="stages-container">
+                    <div class="stages-header">
+                        <div class="stages-title">Estado Actual - IMP-2025-0003</div>
+                        <div class="small">Cerámica Frágil - HomeDeco</div>
+                    </div>
+                    <div class="stages-track">
+                        <div class="stage completed">
+                            <div class="stage-icon">✓</div>
+                            <div class="stage-title">Cotización</div>
+                            <div class="stage-date">15 Oct 2025</div>
+                        </div>
+                        <div class="stage completed">
+                            <div class="stage-icon">✓</div>
+                            <div class="stage-title">Documentación</div>
+                            <div class="stage-date">18 Oct 2025</div>
+                        </div>
+                        <div class="stage completed">
+                            <div class="stage-icon">✓</div>
+                            <div class="stage-title">Embarque</div>
+                            <div class="stage-date">22 Oct 2025</div>
+                        </div>
+                        <div class="stage active">
+                            <div class="stage-icon">↷</div>
+                            <div class="stage-title">En Tránsito</div>
+                            <div class="stage-date">Actual</div>
+                        </div>
+                        <div class="stage">
+                            <div class="stage-icon">◯</div>
+                            <div class="stage-title">Llegada Puerto</div>
+                            <div class="stage-date">Est. 31 Oct</div>
+                        </div>
+                        <div class="stage">
+                            <div class="stage-icon">◯</div>
+                            <div class="stage-title">Desaduanaje</div>
+                            <div class="stage-date">Est. 5 Nov</div>
+                        </div>
+                        <div class="stage">
+                            <div class="stage-icon">◯</div>
+                            <div class="stage-title">Entrega</div>
+                            <div class="stage-date">Est. 10 Nov</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comments-container">
+                    <div class="comments-header">
+                        <div class="comments-title">Comentarios Recientes</div>
+                        <div class="small">Última actualización: Hoy 14:30</div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-author">Operador Juan Pérez</div>
+                            <div class="comment-date">Hoy 14:30</div>
+                        </div>
+                        <div class="comment-text">El embarque ha zarpado según lo programado. Se espera llegada a puerto para el 31 de octubre.</div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-author">Sistema</div>
+                            <div class="comment-date">Ayer 09:15</div>
+                        </div>
+                        <div class="comment-text">Documentación completada y aprobada por aduanas.</div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-author">Cliente HomeDeco</div>
+                            <div class="comment-date">18 Oct 2025</div>
+                        </div>
+                        <div class="comment-text">Hemos enviado la documentación requerida. Por favor confirmar recepción.</div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
 
-        <div class="panel" style="margin-top:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <div style="font-weight:600">Simulador rápido</div>
-            <div class="small">Escenarios</div>
-          </div>
-          <div style="display:flex;gap:8px;flex-direction:column">
-            <button class="btn btn-secondary" onclick="runScenario('aduana')">Retención aduanera</button>
-            <button class="btn btn-secondary" onclick="runScenario('doc_missing')">Documento faltante</button>
-            <button class="btn btn-secondary" onclick="runScenario('delay')">Retraso en puerto</button>
-          </div>
-        </div>
+            <!-- Pantalla de Etapas -->
+            <div class="screen" id="etapasScreen">
+                <h2 class="screen-title">Seguimiento de Operación</h2>
+                
+                <div class="stages-container">
+                    <div class="stages-header">
+                        <div class="stages-title">IMP-2025-0003 - Cerámica Frágil</div>
+                        <div class="small">Cliente: HomeDeco | ETA: 31 Oct 2025</div>
+                    </div>
+                    <div class="stages-track">
+                        <div class="stage completed">
+                            <div class="stage-icon">✓</div>
+                            <div class="stage-title">Cotización</div>
+                            <div class="stage-date">15 Oct 2025</div>
+                        </div>
+                        <div class="stage completed">
+                            <div class="stage-icon">✓</div>
+                            <div class="stage-title">Documentación</div>
+                            <div class="stage-date">18 Oct 2025</div>
+                        </div>
+                        <div class="stage completed">
+                            <div class="stage-icon">✓</div>
+                            <div class="stage-title">Embarque</div>
+                            <div class="stage-date">22 Oct 2025</div>
+                        </div>
+                        <div class="stage active">
+                            <div class="stage-icon">↷</div>
+                            <div class="stage-title">En Tránsito</div>
+                            <div class="stage-date">Actual</div>
+                        </div>
+                        <div class="stage">
+                            <div class="stage-icon">◯</div>
+                            <div class="stage-title">Llegada Puerto</div>
+                            <div class="stage-date">Est. 31 Oct</div>
+                        </div>
+                        <div class="stage">
+                            <div class="stage-icon">◯</div>
+                            <div class="stage-title">Desaduanaje</div>
+                            <div class="stage-date">Est. 5 Nov</div>
+                        </div>
+                        <div class="stage">
+                            <div class="stage-icon">◯</div>
+                            <div class="stage-title">Entrega</div>
+                            <div class="stage-date">Est. 10 Nov</div>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="panel" style="margin-top:12px">
-          <div style="font-weight:600;margin-bottom:8px">Detalles técnicos</div>
-          <div class="small">CUC gen: IMP-YYYY-XXXX · Webhooks · Audit logs · RBAC</div>
-          <div style="margin-top:8px" class="small">Demo: operaciones pre-cargadas. Cambios no son persistentes (local demo).</div>
-        </div>
-      </aside>
-    </main>
+                <div class="comments-container">
+                    <div class="comments-header">
+                        <div class="comments-title">Historial Completo</div>
+                        <div class="small">Todos los eventos registrados</div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-author">Operador Juan Pérez</div>
+                            <div class="comment-date">Hoy 14:30</div>
+                        </div>
+                        <div class="comment-text">El embarque ha zarpado según lo programado. Se espera llegada a puerto para el 31 de octubre.</div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-author">Sistema</div>
+                            <div class="comment-date">Ayer 09:15</div>
+                        </div>
+                        <div class="comment-text">Documentación completada y aprobada por aduanas.</div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-author">Cliente HomeDeco</div>
+                            <div class="comment-date">18 Oct 2025</div>
+                        </div>
+                        <div class="comment-text">Hemos enviado la documentación requerida. Por favor confirmar recepción.</div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-author">Operador María López</div>
+                            <div class="comment-date">15 Oct 2025</div>
+                        </div>
+                        <div class="comment-text">Cotización enviada al cliente. Esperando confirmación.</div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-author">Sistema</div>
+                            <div class="comment-date">14 Oct 2025</div>
+                        </div>
+                        <div class="comment-text">Nueva operación creada: IMP-2025-0003</div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="footer">Plataforma de Importaciones SeaGroup - Versión Demo</div>
+            <!-- Pantalla de Historial (solo para cliente) -->
+            <div class="screen" id="historialScreen">
+                <h2 class="screen-title">Mi Historial de Importaciones</h2>
+                
+                <div class="shipments-list">
+                    <div class="shipment-card">
+                        <div class="shipment-header">
+                            <div class="shipment-cuc">IMP-2025-0003</div>
+                            <div class="shipment-status" style="background: rgba(6, 182, 212, 0.2); color: var(--primary);">En Tránsito</div>
+                        </div>
+                        <div class="shipment-title">Cerámica Frágil</div>
+                        <div class="shipment-client">HomeDeco</div>
+                        <div class="shipment-dates">
+                            <div>Inicio: 14 Oct 2025</div>
+                            <div>ETA: 31 Oct 2025</div>
+                        </div>
+                    </div>
+                    
+                    <div class="shipment-card">
+                        <div class="shipment-header">
+                            <div class="shipment-cuc">IMP-2025-0006</div>
+                            <div class="shipment-status" style="background: rgba(16, 185, 129, 0.2); color: var(--success);">Entregado</div>
+                        </div>
+                        <div class="shipment-title">Accesorios Moda</div>
+                        <div class="shipment-client">Boutique</div>
+                        <div class="shipment-dates">
+                            <div>Inicio: 1 Oct 2025</div>
+                            <div>Entrega: 28 Oct 2025</div>
+                        </div>
+                    </div>
+                    
+                    <div class="shipment-card">
+                        <div class="shipment-header">
+                            <div class="shipment-cuc">IMP-2024-0012</div>
+                            <div class="shipment-status" style="background: rgba(16, 185, 129, 0.2); color: var(--success);">Entregado</div>
+                        </div>
+                        <div class="shipment-title">Muebles Oficina</div>
+                        <div class="shipment-client">HomeDeco</div>
+                        <div class="shipment-dates">
+                            <div>Inicio: 15 Ago 2024</div>
+                            <div>Entrega: 30 Sep 2024</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Modal change status -->
-    <div class="modal-back" id="modalBack">
-      <div class="modal">
-        <h3 id="modalTitle">Actualizar estado</h3>
-        <div style="margin-top:8px">
-          <label>Selecciona nueva etapa</label>
-          <select id="selectStatus">
-            <option>Borrador</option>
-            <option>Cotización aprobada</option>
-            <option>Documentación</option>
-            <option>Embarque</option>
-            <option>En tránsito</option>
-            <option>Llegada puerto</option>
-            <option>Desaduanaje / Nacionalización</option>
-            <option>Liberado</option>
-            <option>En transporte terrestre</option>
-            <option>Entregado en almacén (cliente)</option>
-          </select>
+            <!-- Pantalla de Operaciones (solo para operador) -->
+            <div class="screen" id="operacionesScreen">
+                <h2 class="screen-title">Todas las Operaciones</h2>
+                
+                <div class="shipments-list">
+                    <div class="shipment-card">
+                        <div class="shipment-header">
+                            <div class="shipment-cuc">IMP-2025-0001</div>
+                            <div class="shipment-status" style="background: rgba(255, 255, 255, 0.1);">Borrador</div>
+                        </div>
+                        <div class="shipment-title">Carga Textiles</div>
+                        <div class="shipment-client">ACME S.A.</div>
+                        <div class="shipment-dates">
+                            <div>Inicio: 1 Oct 2025</div>
+                            <div>ETA: 12 Nov 2025</div>
+                        </div>
+                    </div>
+                    
+                    <div class="shipment-card">
+                        <div class="shipment-header">
+                            <div class="shipment-cuc">IMP-2025-0002</div>
+                            <div class="shipment-status" style="background: rgba(245, 158, 11, 0.2); color: var(--warning);">Documentación</div>
+                        </div>
+                        <div class="shipment-title">Componentes Electrónicos</div>
+                        <div class="shipment-client">TecniCorp</div>
+                        <div class="shipment-dates">
+                            <div>Inicio: 5 Oct 2025</div>
+                            <div>ETA: 2 Nov 2025</div>
+                        </div>
+                    </div>
+                    
+                    <div class="shipment-card">
+                        <div class="shipment-header">
+                            <div class="shipment-cuc">IMP-2025-0003</div>
+                            <div class="shipment-status" style="background: rgba(6, 182, 212, 0.2); color: var(--primary);">En Tránsito</div>
+                        </div>
+                        <div class="shipment-title">Cerámica Frágil</div>
+                        <div class="shipment-client">HomeDeco</div>
+                        <div class="shipment-dates">
+                            <div>Inicio: 14 Oct 2025</div>
+                            <div>ETA: 31 Oct 2025</div>
+                        </div>
+                    </div>
+                    
+                    <div class="shipment-card">
+                        <div class="shipment-header">
+                            <div class="shipment-cuc">IMP-2025-0004</div>
+                            <div class="shipment-status" style="background: rgba(6, 182, 212, 0.2); color: var(--primary);">Llegada Puerto</div>
+                        </div>
+                        <div class="shipment-title">Perfumes</div>
+                        <div class="shipment-client">Qantu</div>
+                        <div class="shipment-dates">
+                            <div>Inicio: 10 Oct 2025</div>
+                            <div>ETA: 30 Oct 2025</div>
+                        </div>
+                    </div>
+                    
+                    <div class="shipment-card">
+                        <div class="shipment-header">
+                            <div class="shipment-cuc">IMP-2025-0005</div>
+                            <div class="shipment-status" style="background: rgba(147, 51, 234, 0.2); color: #7c3aed;">Liberado</div>
+                        </div>
+                        <div class="shipment-title">Muebles</div>
+                        <div class="shipment-client">MuebleLtd</div>
+                        <div class="shipment-dates">
+                            <div>Inicio: 8 Oct 2025</div>
+                            <div>ETA: 5 Nov 2025</div>
+                        </div>
+                    </div>
+                    
+                    <div class="shipment-card">
+                        <div class="shipment-header">
+                            <div class="shipment-cuc">IMP-2025-0006</div>
+                            <div class="shipment-status" style="background: rgba(16, 185, 129, 0.2); color: var(--success);">Entregado</div>
+                        </div>
+                        <div class="shipment-title">Accesorios Moda</div>
+                        <div class="shipment-client">Boutique</div>
+                        <div class="shipment-dates">
+                            <div>Inicio: 1 Oct 2025</div>
+                            <div>Entrega: 28 Oct 2025</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div style="margin-top:8px">
-          <label>Comentario (obligatorio si hay excepción)</label>
-          <textarea id="modalNote" rows="3"></textarea>
-        </div>
-        <div style="margin-top:8px;display:flex;justify-content:flex-end;gap:8px">
-          <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-          <button class="btn btn-primary" id="confirmStatus">Confirmar</button>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <script>
-    // User management
-    let currentUser = null;
-    let currentRole = null;
-    let simulation = false;
+    <script>
+        // Datos de usuarios demo
+        const demoUsers = {
+            cliente: {
+                password: "cliente123",
+                accessCode: "111111",
+                name: "Carlos Rodríguez",
+                role: "Cliente",
+                color: "#10b981" // Verde para cliente
+            },
+            operador: {
+                password: "operador123", 
+                accessCode: "222222",
+                name: "María López",
+                role: "Operador",
+                color: "#06b6d4" // Azul para operador
+            }
+        };
 
-    // Demo data
-    const shipments = [
-      {id:1,cuc:'IMP-2025-0001',title:'Carga textiles',client:'ACME S.A.',status:'Borrador',eta:'2025-11-12',owner:'operador'},
-      {id:2,cuc:'IMP-2025-0002',title:'Componentes electrónicos',client:'TecniCorp',status:'Documentación',eta:'2025-11-02',owner:'operador'},
-      {id:3,cuc:'IMP-2025-0003',title:'Fragile - Cerámica',client:'HomeDeco',status:'En tránsito',eta:'2025-10-31',owner:'cliente'},
-      {id:4,cuc:'IMP-2025-0004',title:'Perfumes (Qantu)',client:'Qantu',status:'Llegada puerto',eta:'2025-10-30',owner:'operador'},
-      {id:5,cuc:'IMP-2025-0005',title:'Muebles',client:'MuebleLtd',status:'Liberado',eta:'2025-11-05',owner:'operador'},
-      {id:6,cuc:'IMP-2025-0006',title:'Accesorios moda',client:'Boutique',status:'Entregado en almacén (cliente)',eta:'2025-10-28',owner:'cliente'}
-    ];
+        // Estado de la aplicación
+        let currentUser = null;
+        let currentUserData = null;
 
-    const events = {
-      1:[{ts:'2025-10-01T10:00Z',from:'-',to:'Borrador',note:'Creación cotización'}],
-      2:[{ts:'2025-10-05T11:00Z',from:'Borrador',to:'Documentación',note:'Cliente adjuntó invoice'}],
-      3:[{ts:'2025-10-02T09:20Z',from:'Embarque',to:'En tránsito',note:'Zarpe confirmado'}],
-      4:[{ts:'2025-10-18T13:45Z',from:'En tránsito',to:'Llegada puerto',note:'Arribo Puerto Callao'}],
-      5:[{ts:'2025-10-20T08:30Z',from:'Desaduanaje',to:'Liberado',note:'Pagos y aranceles'}],
-      6:[{ts:'2025-10-28T15:00Z',from:'En transporte terrestre',to:'Entregado en almacén (cliente)',note:'Entrega final confirmada'}]
-    };
+        // Elementos del DOM
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboard = document.getElementById('dashboard');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const accessCodeInput = document.getElementById('accessCode');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userName = document.getElementById('userName');
+        const userRole = document.getElementById('userRole');
+        const userAvatar = document.getElementById('userAvatar');
+        const headerRole = document.getElementById('headerRole');
+        const resumenBadge = document.getElementById('resumenBadge');
+        const navTabs = document.querySelectorAll('.nav-tab');
+        const screens = document.querySelectorAll('.screen');
+        const historialTab = document.getElementById('historialTab');
+        const operacionesTab = document.getElementById('operacionesTab');
 
-    // Login functionality
-    document.querySelectorAll('.user-type').forEach(el => {
-      el.addEventListener('click', () => {
-        document.querySelectorAll('.user-type').forEach(t => t.classList.remove('selected'));
-        el.classList.add('selected');
-      });
-    });
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar cuentas demo
+            document.querySelectorAll('.demo-account').forEach(account => {
+                account.addEventListener('click', function() {
+                    const user = this.getAttribute('data-user');
+                    const pass = this.getAttribute('data-pass');
+                    const code = this.getAttribute('data-code');
+                    
+                    usernameInput.value = user;
+                    passwordInput.value = pass;
+                    accessCodeInput.value = code;
+                });
+            });
 
-    document.getElementById('loginBtn').addEventListener('click', () => {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const userType = document.querySelector('.user-type.selected').dataset.type;
-      
-      if (!username || !password) {
-        alert('Por favor ingresa usuario y contraseña');
-        return;
-      }
-      
-      // Simple authentication (in a real app, this would be server-side)
-      currentUser = username;
-      currentRole = userType;
-      
-      // Update UI based on role
-      document.getElementById('userRoleDisplay').textContent = 
-        userType === 'cliente' ? 'Cliente - Solo lectura' : 'Trabajador - Edición habilitada';
-      document.getElementById('userNameDisplay').textContent = username;
-      document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
-      
-      // Show/hide editing capabilities based on role
-      const editableElements = document.querySelectorAll('#btnChangeStatus, #btnAddEvent, #uploadFile, #chkBL, #chkInv, #chkPck');
-      editableElements.forEach(el => {
-        if (userType === 'cliente') {
-          el.disabled = true;
-          if (el.tagName === 'BUTTON') {
-            el.style.opacity = '0.5';
-            el.style.cursor = 'not-allowed';
-          }
-        } else {
-          el.disabled = false;
-          if (el.tagName === 'BUTTON') {
-            el.style.opacity = '1';
-            el.style.cursor = 'pointer';
-          }
+            // Login
+            loginBtn.addEventListener('click', handleLogin);
+            
+            // Logout
+            logoutBtn.addEventListener('click', handleLogout);
+            
+            // Navegación entre pestañas
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const screenId = this.getAttribute('data-screen') + 'Screen';
+                    
+                    // Actualizar pestañas activas
+                    navTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Mostrar pantalla correspondiente
+                    screens.forEach(screen => {
+                        screen.classList.remove('active');
+                        if (screen.id === screenId) {
+                            screen.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // Permitir login con Enter
+            [usernameInput, passwordInput, accessCodeInput].forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        handleLogin();
+                    }
+                });
+            });
+        });
+
+        // Manejar login
+        function handleLogin() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            const accessCode = accessCodeInput.value.trim();
+            
+            if (!username || !password || !accessCode) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+            
+            // Verificar credenciales
+            if (demoUsers[username] && 
+                demoUsers[username].password === password && 
+                demoUsers[username].accessCode === accessCode) {
+                
+                currentUser = username;
+                currentUserData = demoUsers[username];
+                
+                // Actualizar UI según el rol
+                updateUIForUser();
+                
+                // Cambiar a dashboard
+                loginScreen.style.display = 'none';
+                dashboard.style.display = 'block';
+                
+            } else {
+                alert('Credenciales incorrectas. Usa una de las cuentas demo.');
+            }
         }
-      });
-      
-      // Switch to dashboard
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'flex';
-      
-      // Initialize dashboard
-      updateStats();
-      renderKanban();
-      renderFeed();
-    });
 
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      currentUser = null;
-      currentRole = null;
-      document.getElementById('loginScreen').style.display = 'flex';
-      document.getElementById('dashboard').style.display = 'none';
-      document.getElementById('username').value = '';
-      document.getElementById('password').value = '';
-    });
-
-    // Stats update
-    function updateStats() {
-      document.getElementById('totalShipments').textContent = shipments.length;
-      const activeCount = shipments.filter(s => 
-        !['Entregado en almacén (cliente)'].includes(s.status)
-      ).length;
-      document.getElementById('activeShipments').textContent = activeCount;
-    }
-
-    // Kanban rendering
-    const statuses = ['Borrador','Cotización aprobada','Documentación','Embarque','En tránsito','Llegada puerto','Desaduanaje / Nacionalización','Liberado','En transporte terrestre','Entregado en almacén (cliente)'];
-
-    function renderKanban() {
-      const kanban = document.getElementById('kanban');
-      kanban.innerHTML = '';
-      
-      statuses.forEach(status => {
-        const col = document.createElement('div');
-        col.className = 'col';
-        col.dataset.status = status;
-        
-        const h = document.createElement('h3');
-        h.textContent = status;
-        col.appendChild(h);
-        
-        const list = document.createElement('div');
-        list.dataset.status = status;
-        
-        // Enable drag and drop only for workers
-        if (currentRole === 'trabajador') {
-          list.ondragover = e => e.preventDefault();
-          list.ondrop = e => {
-            e.preventDefault();
-            const id = e.dataTransfer.getData('text');
-            updateStatus(parseInt(id), status);
-          };
+        // Manejar logout
+        function handleLogout() {
+            currentUser = null;
+            currentUserData = null;
+            
+            // Limpiar formulario
+            usernameInput.value = '';
+            passwordInput.value = '';
+            accessCodeInput.value = '';
+            
+            // Volver a pantalla de login
+            dashboard.style.display = 'none';
+            loginScreen.style.display = 'flex';
         }
-        
-        shipments.filter(s => s.status === status).forEach(s => {
-          const card = makeCard(s);
-          list.appendChild(card);
-        });
-        
-        col.appendChild(list);
-        kanban.appendChild(col);
-      });
-    }
 
-    function makeCard(s) {
-      const c = document.createElement('div');
-      c.className = 'card';
-      
-      // Only enable dragging for workers
-      if (currentRole === 'trabajador') {
-        c.draggable = true;
-        c.ondragstart = e => e.dataTransfer.setData('text', s.id);
-      }
-      
-      c.onclick = () => openDetail(s.id);
-      c.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <strong>${s.cuc}</strong>
-          <div class="small">ETA ${s.eta}</div>
-        </div>
-        <div class="meta">${s.title} · ${s.client}</div>
-      `;
-      return c;
-    }
+        // Actualizar UI según el tipo de usuario
+        function updateUIForUser() {
+            if (!currentUserData) return;
+            
+            // Actualizar información de usuario
+            userName.textContent = currentUserData.name;
+            userRole.textContent = currentUserData.role;
+            headerRole.textContent = `Panel de ${currentUserData.role.toLowerCase()}`;
+            userAvatar.textContent = currentUserData.name.charAt(0);
+            resumenBadge.textContent = currentUserData.role;
+            
+            // Cambiar colores según el rol
+            document.documentElement.style.setProperty('--primary', currentUserData.color);
+            
+            // Mostrar/ocultar pestañas según el rol
+            if (currentUser === 'cliente') {
+                historialTab.style.display = 'block';
+                operacionesTab.style.display = 'none';
+                
+                // Activar pestaña de historial por defecto para clientes
+                document.querySelector('[data-screen="historial"]').click();
+            } else {
+                historialTab.style.display = 'none';
+                operacionesTab.style.display = 'block';
+                
+                // Activar pestaña de operaciones por defecto para operadores
+                document.querySelector('[data-screen="operaciones"]').click();
+            }
+            
+            // Actualizar estadísticas
+            updateStats();
+        }
 
-    function updateStatus(id, newStatus) {
-      const s = shipments.find(x => x.id === id);
-      if (!s) return;
-      
-      // Only workers can update status
-      if (currentRole !== 'trabajador') {
-        alert('Solo los trabajadores pueden modificar el estado de las operaciones');
-        return;
-      }
-      
-      const old = s.status;
-      s.status = newStatus;
-      events[id] = events[id] || [];
-      events[id].push({
-        ts: new Date().toISOString(),
-        from: old,
-        to: newStatus,
-        note: simulation ? ('SIM - ' + newStatus) : (`${currentUser} movió a ${newStatus}`)
-      });
-      
-      renderKanban();
-      renderFeed();
-      updateStats();
-      
-      if (openedId === id) openDetail(id);
-    }
-
-    // Detail / timeline
-    let openedId = null;
-    function openDetail(id) {
-      openedId = id;
-      const s = shipments.find(x => x.id === id);
-      const header = document.getElementById('detailHeader');
-      header.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div style="font-size:14px;font-weight:700">${s.cuc}</div>
-            <div class="small">${s.title} · ${s.client}</div>
-          </div>
-          <div>
-            <span class="badge status-${s.status.replace(/\s/g,'')}">${s.status}</span>
-          </div>
-        </div>
-        <div style="margin-top:8px" class="small">ETA: ${s.eta}</div>
-      `;
-      
-      const timeline = document.getElementById('timeline');
-      timeline.innerHTML = '';
-      
-      if (events[id] && events[id].length > 0) {
-        events[id].slice().reverse().forEach(ev => {
-          const e = document.createElement('div');
-          e.className = 'event';
-          e.innerHTML = `
-            <div style="display:flex;justify-content:space-between">
-              <div>
-                <strong>${ev.to}</strong>
-                <div class="small">${new Date(ev.ts).toLocaleString()}</div>
-              </div>
-              <div class="small">${ev.note}</div>
-            </div>
-          `;
-          timeline.appendChild(e);
-        });
-      } else {
-        timeline.innerHTML = '<div style="text-align:center;padding:10px;color:var(--muted)">No hay eventos para mostrar</div>';
-      }
-      
-      document.getElementById('costCIF').textContent = '$' + (2000 + id * 50);
-      document.getElementById('costAdd').textContent = '$' + (100 + id * 10);
-      document.getElementById('costTotal').textContent = '$' + (2100 + id * 60);
-      
-      openedSelectionCheckboxes(id);
-    }
-
-    function openedSelectionCheckboxes(id) {
-      // Reset demo checkboxes
-      document.getElementById('chkBL').checked = false;
-      document.getElementById('chkInv').checked = false;
-      document.getElementById('chkPck').checked = false;
-      document.getElementById('fp').textContent = 'Ningún archivo';
-    }
-
-    // feed
-    function renderFeed() {
-      const feed = document.getElementById('feed');
-      feed.innerHTML = '';
-      
-      const recent = [];
-      Object.keys(events).forEach(k => {
-        const arr = events[k];
-        arr.forEach(ev => recent.push({
-          cuc: (shipments.find(s => s.id == k) || {}).cuc || 'IMP-??',
-          ts: ev.ts,
-          note: ev.note
-        }));
-      });
-      
-      recent.sort((a, b) => new Date(b.ts) - new Date(a.ts));
-      
-      if (recent.length > 0) {
-        recent.slice(0, 8).forEach(r => {
-          const d = document.createElement('div');
-          d.className = 'small';
-          d.style.padding = '6px 0';
-          d.textContent = `[${new Date(r.ts).toLocaleString()}] ${r.cuc} — ${r.note}`;
-          feed.appendChild(d);
-        });
-      } else {
-        feed.innerHTML = '<div style="text-align:center;padding:10px;color:var(--muted)">No hay actividad reciente</div>';
-      }
-    }
-
-    // modal logic
-    const modalBack = document.getElementById('modalBack');
-    function closeModal() {
-      modalBack.style.display = 'none';
-    }
-    
-    document.getElementById('btnChangeStatus').onclick = () => {
-      if (!openedId) {
-        alert('Selecciona una operación del Kanban primero.');
-        return;
-      }
-      
-      // Only workers can change status
-      if (currentRole !== 'trabajador') {
-        alert('Solo los trabajadores pueden modificar el estado de las operaciones');
-        return;
-      }
-      
-      document.getElementById('modalTitle').textContent = 'Actualizar estado de ' + shipments.find(s => s.id === openedId).cuc;
-      document.getElementById('selectStatus').value = shipments.find(s => s.id === openedId).status;
-      document.getElementById('modalNote').value = '';
-      modalBack.style.display = 'flex';
-    };
-    
-    document.getElementById('confirmStatus').onclick = () => {
-      const newStatus = document.getElementById('selectStatus').value;
-      updateStatus(openedId, newStatus);
-      closeModal();
-    };
-
-    // Quick scenarios
-    function runScenario(type) {
-      simulation = true;
-      const s = shipments.find(s => s.id === openedId);
-      if (!s) {
-        alert('Selecciona una operación del Kanban primero.');
-        return;
-      }
-      
-      if (type === 'aduana') {
-        updateStatus(openedId, 'Desaduanaje / Nacionalización');
-        events[openedId].push({
-          ts: new Date().toISOString(),
-          from: s.status,
-          to: 'Desaduanaje / Nacionalización',
-          note: 'SIM - Retención aduanera por documentación incompleta'
-        });
-      } else if (type === 'doc_missing') {
-        events[openedId].push({
-          ts: new Date().toISOString(),
-          from: s.status,
-          to: s.status,
-          note: 'SIM - Documento faltante: Certificado de origen'
-        });
-      } else if (type === 'delay') {
-        events[openedId].push({
-          ts: new Date().toISOString(),
-          from: s.status,
-          to: s.status,
-          note: 'SIM - Retraso en puerto por condiciones climáticas'
-        });
-      }
-      
-      openDetail(openedId);
-      renderFeed();
-      simulation = false;
-    }
-
-    // Initialize
-    document.getElementById('uploadFile').onchange = function() {
-      document.getElementById('fp').textContent = this.files.length ? this.files[0].name : 'Ningún archivo';
-    };
-    
-    document.getElementById('focusKanban').onclick = () => {
-      document.querySelector('.kanban').scrollIntoView({behavior:'smooth'});
-    };
-    
-    document.getElementById('focusTimeline').onclick = () => {
-      document.getElementById('timeline').scrollIntoView({behavior:'smooth'});
-    };
-    
-    document.getElementById('btnAddEvent').onclick = () => {
-      if (!openedId) {
-        alert('Selecciona una operación del Kanban primero.');
-        return;
-      }
-      
-      // Only workers can add events
-      if (currentRole !== 'trabajador') {
-        alert('Solo los trabajadores pueden añadir eventos');
-        return;
-      }
-      
-      const note = prompt('Ingresa el texto del evento:');
-      if (note) {
-        events[openedId].push({
-          ts: new Date().toISOString(),
-          from: shipments.find(s => s.id === openedId).status,
-          to: shipments.find(s => s.id === openedId).status,
-          note: `${currentUser}: ${note}`
-        });
-        openDetail(openedId);
-        renderFeed();
-      }
-    };
-    
-    document.getElementById('btnSearch').onclick = () => {
-      const cuc = document.getElementById('searchCUC').value.trim().toUpperCase();
-      if (!cuc) return;
-      
-      const s = shipments.find(x => x.cuc === cuc);
-      if (s) {
-        openDetail(s.id);
-        document.querySelector('.kanban').scrollIntoView({behavior:'smooth'});
-      } else {
-        alert('CUC no encontrado: ' + cuc);
-      }
-    };
-  </script>
+        // Actualizar estadísticas
+        function updateStats() {
+            // Simular datos diferentes según el usuario
+            if (currentUser === 'cliente') {
+                document.getElementById('totalOperaciones').textContent = '3';
+                document.getElementById('operacionesActivas').textContent = '1';
+                document.getElementById('operacionesCompletadas').textContent = '2';
+                document.getElementById('operacionesRetrasadas').textContent = '0';
+            } else {
+                document.getElementById('totalOperaciones').textContent = '6';
+                document.getElementById('operacionesActivas').textContent = '4';
+                document.getElementById('operacionesCompletadas').textContent = '2';
+                document.getElementById('operacionesRetrasadas').textContent = '1';
+            }
+        }
+    </script>
 </body>
 </html>
