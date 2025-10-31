@@ -1,118 +1,338 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>SISTEM – Acceso</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Maqueta - Plataforma de Importaciones (Demo)</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #ecf0f1;
-      margin: 0;
-      padding: 0;
-    }
-    .screen {
-      display: none;
-      padding: 2em;
-    }
-    .active {
-      display: block;
-    }
-    .login-box {
-      background: white;
-      padding: 2em;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      width: 300px;
-      margin: 5em auto;
-    }
-    h2 {
-      text-align: center;
-      color: #2c3e50;
-    }
-    label {
-      display: block;
-      margin-top: 1em;
-      font-weight: bold;
-    }
-    input {
-      width: 100%;
-      padding: 0.5em;
-      margin-top: 0.3em;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      margin-top: 1.5em;
-      width: 100%;
-      padding: 0.7em;
-      background: #2c3e50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .card {
-      background: white;
-      padding: 1em;
-      margin-bottom: 1em;
-      border-radius: 5px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    }
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#9ca3af;--success:#10b981;--danger:#ef4444}
+    *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{margin:0;background:linear-gradient(180deg,#071029 0%, #081427 60%);color:#e6eef6}
+    header{display:flex;align-items:center;gap:16px;padding:18px 24px;border-bottom:1px solid rgba(255,255,255,0.03)}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:44px;height:44px;background:linear-gradient(135deg,#06b6d4,#7c3aed);display:flex;align-items:center;justify-content:center;border-radius:8px;font-weight:700}
+    h1{font-size:16px;margin:0}
+    .controls{margin-left:auto;display:flex;gap:8px;align-items:center}
+    .btn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;color:inherit;cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),#7c3aed);color:#031025;font-weight:600;border:none}
+    .layout{display:grid;grid-template-columns:320px 1fr 360px;gap:18px;padding:20px}
+    .panel{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.04);padding:16px;border-radius:12px;min-height:120px}
+    .search{display:flex;gap:8px}
+    input[type=text]{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    .roles{display:flex;gap:6px}
+    .chip{padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+    .active{box-shadow:0 6px 18px rgba(7,19,34,0.6);border-color:rgba(255,255,255,0.06);}
+    /* Kanban */
+    .kanban{display:flex;gap:12px;overflow:auto;padding-bottom:12px}
+    .col{min-width:260px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px}
+    .col h3{margin:0 0 10px 0;font-size:13px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));padding:10px;border-radius:10px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.03);cursor:grab}
+    .card .meta{font-size:12px;color:var(--muted)}
+    .timeline{display:flex;flex-direction:column;gap:10px}
+    .event{padding:10px;border-radius:8px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.02)}
+    .small{font-size:12px;color:var(--muted)}
+    /* detail right */
+    .detail{display:flex;flex-direction:column;gap:12px}
+    .detail .section{padding:12px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03)}
+    .badge{display:inline-block;padding:6px 8px;border-radius:999px;font-size:12px}
+    .status-Borrador{background:rgba(255,255,255,0.03)}
+    .status-Embarque{background:linear-gradient(90deg,#f59e0b,#f97316);color:#051018}
+    .status-Entregado{background:linear-gradient(90deg,#10b981,#059669);color:#02110a}
+    .status-Liberado{background:linear-gradient(90deg,#60a5fa,#7c3aed);color:#021025}
+    .footer{padding:14px;text-align:center;color:var(--muted);font-size:13px}
+    /* modal */
+    .modal-back{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:none;align-items:center;justify-content:center}
+    .modal{width:720px;background:#031025;padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
+    label{display:block;margin-bottom:6px;font-size:13px}
+    select, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    .flex{display:flex;gap:8px}
+    .file-preview{font-size:13px;color:var(--muted)}
+    /* responsive */
+    @media(max-width:1000px){.layout{grid-template-columns:1fr;}}
   </style>
 </head>
 <body>
-
-<!-- Pantalla de acceso -->
-<div id="loginScreen" class="screen active">
-  <div class="login-box">
-    <h2>Acceso al Sistema</h2>
-    <label>Usuario</label>
-    <input type="text" placeholder="Ej. operador01">
-    <label>Contraseña</label>
-    <input type="password" placeholder="********">
-    <label>Código de carga</label>
-    <input type="text" placeholder="IMP-2025-0012">
-    <button onclick="mostrarPanel()">Ingresar</button>
-  </div>
-</div>
-
-<!-- Pantalla del proceso -->
-<div id="panelScreen" class="screen">
-  <div style="background:#2c3e50; color:white; padding:1em; text-align:center;">
-    <h1>SISTEM – Seguimiento Operativo</h1>
-    <p>Código de carga: <strong>IMP-2025-0012</strong></p>
-  </div>
-  <div style="padding:2em;">
-    <div class="card">
-      <h2>Estado actual: <span style="color: green;">En tránsito</span></h2>
-      <p>Cliente: <strong>Comercial XYZ SAC</strong></p>
-      <p>Producto: <strong>Equipos electrónicos</strong></p>
-      <p>Origen: <strong>Shenzhen, China</strong> | Destino: <strong>Lima, Perú</strong></p>
+  <header>
+    <div class="brand">
+      <div class="logo">SG</div>
+      <div>
+        <h1>Sea Group — Plataforma de Importaciones (Demo)</h1>
+        <div class="small">Maqueta funcional: trazabilidad por CUC · simulación · RBAC</div>
+      </div>
     </div>
-
-    <div class="card">
-      <h3>Etapas del proceso</h3>
-      <p>✅ Cotización aprobada – 15 Oct 2025</p>
-      <p>✅ Documentación completada – 18 Oct 2025</p>
-      <p>✅ Embarque – 20 Oct 2025</p>
-      <p>🕒 Nacionalización en curso</p>
-      <p>⏳ Entrega pendiente</p>
+    <div class="controls">
+      <div class="small">Role:</div>
+      <div class="roles" id="roles"></div>
+      <button class="btn" id="toggleSim">Simulación: OFF</button>
+      <button class="btn primary" id="newShipment">Nueva operación</button>
     </div>
+  </header>
 
-    <div class="card">
-      <h3>Comentarios del operador</h3>
-      <p>“Carga liberada por aduanas, en espera de programación de transporte terrestre.”</p>
+  <main class="layout">
+    <!-- LEFT: Buscador y filtros -->
+    <aside class="panel">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+        <div style="font-weight:600">Buscar por CUC</div>
+      </div>
+      <div class="search">
+        <input id="searchCUC" type="text" placeholder="ej. IMP-2025-0012" />
+        <button class="btn" id="btnSearch">Buscar</button>
+      </div>
+
+      <hr style="opacity:.06;margin:12px 0" />
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <div style="font-weight:600">Filtros rápidos</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label><input type="checkbox" id="onlyMy" /> Mostrar solo mis envíos</label>
+        <label><input type="checkbox" id="delayed" /> Mostrar retrasados</label>
+      </div>
+
+      <hr style="opacity:.06;margin:12px 0" />
+      <div style="font-weight:600;margin-bottom:8px">Atajos</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn" id="focusKanban">Ir a Kanban</button>
+        <button class="btn" id="focusTimeline">Ir a Timeline</button>
+      </div>
+
+      <div style="margin-top:14px" class="small">Demo data: 6 envíos · CUC formato IMP-YYYY-XXXX</div>
+    </aside>
+
+    <!-- CENTER: Kanban y timeline -->
+    <section style="display:flex;flex-direction:column;gap:12px">
+      <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <h2 style="margin:0;font-size:16px">Pipeline operativo</h2>
+          <div class="small">Arrastra una operación entre columnas para simular transición</div>
+        </div>
+        <div class="kanban" id="kanban"></div>
+      </div>
+
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <h2 style="margin:0;font-size:16px">Ficha de envío — Detalle (por CUC)</h2>
+          <div class="small">Selecciona una tarjeta en el Kanban para ver detalles</div>
+        </div>
+        <div style="display:flex;gap:12px">
+          <div style="flex:1">
+            <div class="section" id="detailHeader">
+              <!-- populated by JS -->
+            </div>
+            <div class="section" style="margin-top:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-weight:600">Timeline / Eventos</div>
+                <div class="small">Últimos eventos mostrados</div>
+              </div>
+              <div class="timeline" id="timeline" style="margin-top:8px"></div>
+            </div>
+          </div>
+          <div style="width:300px" class="detail">
+            <div class="section">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-weight:600">Checklist documental</div>
+                <div class="small">Estado</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+                <label><input type="checkbox" id="chkBL" /> Bill of Lading</label>
+                <label><input type="checkbox" id="chkInv" /> Invoice</label>
+                <label><input type="checkbox" id="chkPck" /> Packing List</label>
+                <div style="display:flex;gap:8px;margin-top:6px">
+                  <input id="uploadFile" type="file" />
+                  <div class="file-preview" id="fp">Ningún archivo</div>
+                </div>
+              </div>
+              <div style="margin-top:8px;display:flex;gap:8px">
+                <button class="btn primary" id="btnChangeStatus">Actualizar estado</button>
+                <button class="btn" id="btnAddEvent">Añadir evento</button>
+              </div>
+            </div>
+
+            <div class="section">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-weight:600">Costos (resumen)</div>
+                <div class="small">Moneda: USD</div>
+              </div>
+              <div style="margin-top:8px">
+                <div class="small">CIF estimado: <strong id="costCIF">$2,350</strong></div>
+                <div class="small">Costos adicionales: <strong id="costAdd">$150</strong></div>
+                <div class="small">Total estimado: <strong id="costTotal">$2,500</strong></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Actividad y notificaciones -->
+    <aside>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-weight:600">Actividad reciente</div>
+          <div class="small">feed</div>
+        </div>
+        <div id="feed"></div>
+      </div>
+
+      <div class="panel" style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-weight:600">Simulador rápido</div>
+          <div class="small">Escenarios</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-direction:column">
+          <button class="btn" onclick="runScenario('aduana')">Retención aduanera</button>
+          <button class="btn" onclick="runScenario('doc_missing')">Documento faltante</button>
+          <button class="btn" onclick="runScenario('delay')">Retraso en puerto</button>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:12px">
+        <div style="font-weight:600;margin-bottom:8px">Detalles técnicos</div>
+        <div class="small">CUC gen: IMP-YYYY-XXXX · Webhooks · Audit logs · RBAC</div>
+        <div style="margin-top:8px" class="small">Demo: operaciones pre-cargadas. Cambios no son persistentes (local demo).</div>
+      </div>
+    </aside>
+  </main>
+
+  <div class="footer">Maqueta interactiva — solicita que la transforme a React/Tailwind o la exporte como ZIP</div>
+
+  <!-- Modal change status -->
+  <div class="modal-back" id="modalBack">
+    <div class="modal">
+      <h3 id="modalTitle">Actualizar estado</h3>
+      <div style="margin-top:8px">
+        <label>Selecciona nueva etapa</label>
+        <select id="selectStatus">
+          <option>Borrador</option>
+          <option>Cotización aprobada</option>
+          <option>Documentación</option>
+          <option>Embarque</option>
+          <option>En tránsito</option>
+          <option>Llegada puerto</option>
+          <option>Desaduanaje / Nacionalización</option>
+          <option>Liberado</option>
+          <option>En transporte terrestre</option>
+          <option>Entregado en almacén (cliente)</option>
+        </select>
+      </div>
+      <div style="margin-top:8px">
+        <label>Comentario (obligatorio si hay excepción)</label>
+        <textarea id="modalNote" rows="3"></textarea>
+      </div>
+      <div style="margin-top:8px;display:flex;justify-content:flex-end;gap:8px">
+        <button class="btn" onclick="closeModal()">Cancelar</button>
+        <button class="btn primary" id="confirmStatus">Confirmar</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-  function mostrarPanel() {
-    document.getElementById('loginScreen').classList.remove('active');
-    document.getElementById('panelScreen').classList.add('active');
-  }
-</script>
+  <script>
+    // Demo data
+    const roles = ['cliente','operador','administrador'];
+    let currentRole = 'operador';
+    let simulation = false;
 
+    const shipments = [
+      {id:1,cuc:'IMP-2025-0001',title:'Carga textiles',client:'ACME S.A.',status:'Borrador',eta:'2025-11-12',owner:'operador'},
+      {id:2,cuc:'IMP-2025-0002',title:'Componentes electrónicos',client:'TecniCorp',status:'Documentación',eta:'2025-11-02',owner:'operador'},
+      {id:3,cuc:'IMP-2025-0003',title:'Fragile - Cerámica',client:'HomeDeco',status:'En tránsito',eta:'2025-10-31',owner:'cliente'},
+      {id:4,cuc:'IMP-2025-0004',title:'Perfumes (Qantu)',client:'Qantu',status:'Llegada puerto',eta:'2025-10-30',owner:'operador'},
+      {id:5,cuc:'IMP-2025-0005',title:'Muebles',client:'MuebleLtd',status:'Liberado',eta:'2025-11-05',owner:'operador'},
+      {id:6,cuc:'IMP-2025-0006',title:'Accesorios moda',client:'Boutique',status:'Entregado en almacén (cliente)',eta:'2025-10-28',owner:'cliente'}
+    ];
+
+    const events = {
+      1:[{ts:'2025-10-01T10:00Z',from:'-',to:'Borrador',note:'Creación cotización'}],
+      2:[{ts:'2025-10-05T11:00Z',from:'Borrador',to:'Documentación',note:'Cliente adjuntó invoice'}],
+      3:[{ts:'2025-10-02T09:20Z',from:'Embarque',to:'En tránsito',note:'Zarpe confirmado'}],
+      4:[{ts:'2025-10-18T13:45Z',from:'En tránsito',to:'Llegada puerto',note:'Arribo Puerto Callao'}],
+      5:[{ts:'2025-10-20T08:30Z',from:'Desaduanaje',to:'Liberado',note:'Pagos y aranceles'}],
+      6:[{ts:'2025-10-28T15:00Z',from:'En transporte terrestre',to:'Entregado en almacén (cliente)',note:'Entrega final confirmada'}]
+    };
+
+    // UI init
+    const rolesEl = document.getElementById('roles');
+    roles.forEach(r=>{
+      const el = document.createElement('div');el.className='chip'+(r===currentRole?' active':'');el.textContent=r;el.onclick=()=>setRole(r);rolesEl.appendChild(el);
+    });
+
+    function setRole(r){currentRole=r;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));Array.from(document.querySelectorAll('.chip')).find(c=>c.textContent===r).classList.add('active');renderKanban();renderFeed();}
+
+    document.getElementById('toggleSim').onclick=()=>{simulation=!simulation;document.getElementById('toggleSim').textContent='Simulación: '+(simulation?'ON':'OFF');}
+    document.getElementById('newShipment').onclick=()=>createNewMock();
+
+    function createNewMock(){const id=shipments.length+1;const s={id,cuc:`IMP-2025-00${id}`,title:'Nueva carga demo',client:'ClienteX',status:'Borrador',eta:'2025-11-20',owner:currentRole};shipments.push(s);events[id]=[{ts:new Date().toISOString(),from:'-',to:'Borrador',note:'Creado en UI'}];renderKanban();openDetail(s.id);pushFeed(`Se creó ${s.cuc}`);} 
+
+    // Kanban rendering
+    const statuses=['Borrador','Cotización aprobada','Documentación','Embarque','En tránsito','Llegada puerto','Desaduanaje / Nacionalización','Liberado','En transporte terrestre','Entregado en almacén (cliente)'];
+
+    function renderKanban(){const kanban=document.getElementById('kanban');kanban.innerHTML='';statuses.forEach(status=>{
+      const col=document.createElement('div');col.className='col';col.dataset.status=status;
+      const h=document.createElement('h3');h.textContent=status;col.appendChild(h);
+      const list=document.createElement('div');list.dataset.status=status;list.ondragover=e=>e.preventDefault();list.ondrop=e=>{e.preventDefault();const id=e.dataTransfer.getData('text');updateStatus(parseInt(id),status)};
+      shipments.filter(s=>s.status===status).forEach(s=>{const card=makeCard(s);list.appendChild(card);});col.appendChild(list);kanban.appendChild(col);
+    });}
+
+    function makeCard(s){const c=document.createElement('div');c.className='card';c.draggable=true;c.ondragstart=e=>e.dataTransfer.setData('text',s.id);c.onclick=()=>openDetail(s.id);
+      c.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><strong>${s.cuc}</strong><div class="small">ETA ${s.eta}</div></div><div class="meta">${s.title} · ${s.client}</div>`;
+      return c;
+    }
+
+    function updateStatus(id,newStatus){const s=shipments.find(x=>x.id===id);if(!s) return; // validation example
+      // simple validation: if moving to Embarque require invoice flag (simulate)
+      if(newStatus==='Embarque' && !simulation){ if(!confirm('¿Seguro? (en demo no hay BL/Invoice)')) return; }
+      const old=s.status; s.status=newStatus;events[id]=events[id]||[];events[id].push({ts:new Date().toISOString(),from:old,to:newStatus,note:simulation?('SIM - '+newStatus):('Operador movió a '+newStatus)});
+      renderKanban();renderFeed(); if(openedId===id) openDetail(id);
+    }
+
+    // Detail / timeline
+    let openedId=null;
+    function openDetail(id){openedId=id;const s=shipments.find(x=>x.id===id);const header=document.getElementById('detailHeader');header.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:14px;font-weight:700">${s.cuc}</div><div class="small">${s.title} · ${s.client}</div></div><div><span class="badge status-${s.status.replace(/\s/g,'')}">${s.status}</span></div></div><div style="margin-top:8px" class="small">ETA: ${s.eta}</div>`;
+      const timeline=document.getElementById('timeline');timeline.innerHTML='';(events[id]||[]).slice().reverse().forEach(ev=>{const e=document.createElement('div');e.className='event';e.innerHTML=`<div style="display:flex;justify-content:space-between"><div><strong>${ev.to}</strong><div class="small">${new Date(ev.ts).toLocaleString()}</div></div><div class="small">${ev.note}</div></div>`;timeline.appendChild(e);});
+      document.getElementById('costCIF').textContent='$'+(2000+id*50);
+      openedSelectionCheckboxes(id);
+    }
+
+    function openedSelectionCheckboxes(id){ // reset demo checkboxes
+      document.getElementById('chkBL').checked=false;document.getElementById('chkInv').checked=false;document.getElementById('chkPck').checked=false;document.getElementById('fp').textContent='Ningún archivo';}
+
+    // feed
+    function renderFeed(){const feed=document.getElementById('feed');feed.innerHTML='';
+      const recent=[];Object.keys(events).forEach(k=>{const arr=events[k];arr.forEach(ev=>recent.push({cuc:(shipments.find(s=>s.id==k)||{}).cuc || 'IMP-??',ts:ev.ts,note:ev.note}))});
+      recent.sort((a,b)=>new Date(b.ts)-new Date(a.ts));recent.slice(0,8).forEach(r=>{const d=document.createElement('div');d.className='small';d.style.padding='6px 0';d.textContent=`[${new Date(r.ts).toLocaleString()}] ${r.cuc} — ${r.note}`;feed.appendChild(d);});
+    }
+
+    // modal logic
+    const modalBack=document.getElementById('modalBack');function closeModal(){modalBack.style.display='none';}
+    document.getElementById('btnChangeStatus').onclick=()=>{if(!openedId){alert('Selecciona una operación del Kanban primero.');return;}modalBack.style.display='flex';}
+    document.getElementById('confirmStatus').onclick=()=>{
+      const to=document.getElementById('selectStatus').value;const note=document.getElementById('modalNote').value; if(!note) { if(!confirm('No hay comentario. Continuar?')) return; }
+      updateStatus(openedId,to);closeModal();document.getElementById('modalNote').value='';pushFeed(`Estado ${to} para ${shipments.find(s=>s.id===openedId).cuc}`);
+    }
+
+    // add event
+    document.getElementById('btnAddEvent').onclick=()=>{if(!openedId){alert('Selecciona una operación primero.');return;} const n=prompt('Comentario del evento:'); if(!n) return; events[openedId]=events[openedId]||[];events[openedId].push({ts:new Date().toISOString(),from:'manual',to:shipments.find(s=>s.id===openedId).status,note:n});openDetail(openedId);renderFeed();}
+
+    // upload preview
+    document.getElementById('uploadFile').onchange=e=>{const f=e.target.files[0];document.getElementById('fp').textContent=f?f.name:'Ningún archivo';pushFeed(`Archivo subido (${f?f.name:'-'}) para ${openedId?shipments.find(s=>s.id===openedId).cuc:'-'}`)}
+
+    // search
+    document.getElementById('btnSearch').onclick=()=>{const q=document.getElementById('searchCUC').value.trim();if(!q) return renderKanban();const s=shipments.find(x=>x.cuc.toLowerCase()===q.toLowerCase());if(s){openDetail(s.id);const col = Array.from(document.querySelectorAll('.card')).find(c=>c.textContent.includes(s.cuc)); if(col) col.scrollIntoView({behavior:'smooth',block:'center'});} else alert('No encontrado.');}
+
+    // scenarios
+    function runScenario(type){if(!openedId) {alert('Selecciona una operación para aplicar el escenario.');return;} if(type==='aduana'){events[openedId].push({ts:new Date().toISOString(),from:shipments.find(s=>s.id===openedId).status,to:'Desaduanaje',note:simulation? 'SIM: Retención aduanera':'Retenido por SUNAT'});shipments.find(s=>s.id===openedId).status='Desaduanaje';openDetail(openedId);renderKanban();pushFeed('Escenario: Retención aduanera aplicado.');}
+      if(type==='doc_missing'){events[openedId].push({ts:new Date().toISOString(),from:shipments.find(s=>s.id===openedId).status,to:'Documentación',note:'Falta invoice / BL'});shipments.find(s=>s.id===openedId).status='Documentación';openDetail(openedId);renderKanban();pushFeed('Escenario: Documento faltante.');}
+      if(type==='delay'){events[openedId].push({ts:new Date().toISOString(),from:shipments.find(s=>s.id===openedId).status,to:shipments.find(s=>s.id===openedId).status,note:'Demora en puerto 48h'});openDetail(openedId);renderKanban();pushFeed('Escenario: Retraso aplicado.');}
+    }
+
+    function pushFeed(msg){const now=new Date().toISOString();events['sys']=events['sys']||[];events['sys'].push({ts:now,note:msg});renderFeed();}
+
+    // focus helpers
+    document.getElementById('focusKanban').onclick=()=>{document.querySelector('.kanban').scrollIntoView({behavior:'smooth'});}
+    document.getElementById('focusTimeline').onclick=()=>{document.getElementById('timeline').scrollIntoView({behavior:'smooth'});}
+
+    // initial
+    renderKanban();renderFeed();
+  </script>
 </body>
 </html>
-
