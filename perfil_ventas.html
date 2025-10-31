@@ -1,1 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas - SeaGroup Importaciones</title>
+    <style>
+        :root {
+            --primary: #f59e0b;
+            --primary-dark: #d97706;
+            --bg: #0f1724;
+            --card: #0b1220;
+            --text: #e6eef6;
+            --muted: #9ca3af;
+            --border: rgba(255, 255, 255, 0.05);
+            --success: #10b981;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(11, 18, 32, 0.95);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 20px;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), #f97316);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .logo-text h1 {
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(245, 158, 11, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Navegación */
+        .nav-tabs {
+            background: rgba(11, 18, 32, 0.9);
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 5px;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 15px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Contenido Principal */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Dashboard */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .screen-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        /* Formularios */
+        .form-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Tablas */
+        .table-container {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pendiente {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--primary);
+        }
+
+        .status-aprobada {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">SG</div>
+                <div class="logo-text">
+                    <h1>SeaGroup Ventas</h1>
+                    <p>Módulo de Gestión Comercial</p>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">V</div>
+                <div>
+                    <div style="font-weight: 600;">Usuario Ventas</div>
+                    <div style="font-size: 12px; color: var(--muted);">Área Comercial</div>
+                </div>
+                <button class="btn-logout" onclick="window.location.href='index.html'">Cerrar Sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navegación -->
+    <nav class="nav-tabs">
+        <div class="nav-container">
+            <div class="nav-tab active" data-screen="dashboard">Dashboard</div>
+            <div class="nav-tab" data-screen="cotizaciones">Cotizaciones</div>
+            <div class="nav-tab" data-screen="proveedores">Proveedores</div>
+            <div class="nav-tab" data-screen="incoterms">Incoterms</div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <!-- Dashboard -->
+        <div class="screen active" id="dashboardScreen">
+            <div class="dashboard-header">
+                <h2 class="screen-title">Dashboard Comercial</h2>
+                <div class="badge">Área de Ventas</div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Cotizaciones Activas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Clientes Activos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Proveedores Registrados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">75%</div>
+                    <div class="stat-label">Tasa de Conversión</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Crear Nueva Cotización Rápida</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Cliente</label>
+                        <select class="form-select">
+                            <option>Seleccionar cliente...</option>
+                            <option>HomeDeco S.A.</option>
+                            <option>TecniCorp</option>
+                            <option>Boutique Moda</option>
+                            <option>ACME Corporation</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Producto/Servicio</label>
+                        <input type="text" class="form-input" placeholder="Descripción del producto">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Valor Estimado (USD)</label>
+                        <input type="number" class="form-input" placeholder="0.00">
+                    </div>
+                </div>
+                <button class="btn btn-primary">Generar Cotización</button>
+            </div>
+        </div>
+
+        <!-- Cotizaciones -->
+        <div class="screen" id="cotizacionesScreen">
+            <div class="dashboard-header">
+                <h2 class="screen-title">Gestión de Cotizaciones</h2>
+                <button class="btn btn-primary" onclick="showNuevaCotizacion()">Nueva Cotización</button>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Cliente</th>
+                            <th>Producto</th>
+                            <th>Valor (USD)</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>COT-2024-001</td>
+                            <td>HomeDeco S.A.</td>
+                            <td>Cerámica Frágil</td>
+                            <td>$12,500</td>
+                            <td><span class="status-badge status-aprobada">Aprobada</span></td>
+                            <td>15/10/2024</td>
+                            <td>
+                                <button class="action-btn">Editar</button>
+                                <button class="action-btn">Ver</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>COT-2024-002</td>
+                            <td>TecniCorp</td>
+                            <td>Componentes Electrónicos</td>
+                            <td>$8,750</td>
+                            <td><span class="status-badge status-pendiente">Pendiente</span></td>
+                            <td>18/10/2024</td>
+                            <td>
+                                <button class="action-btn">Editar</button>
+                                <button class="action-btn">Ver</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>COT-2024-003</td>
+                            <td>Boutique Moda</td>
+                            <td>Accesorios Textiles</td>
+                            <td>$5,200</td>
+                            <td><span class="status-badge status-aprobada">Aprobada</span></td>
+                            <td>20/10/2024</td>
+                            <td>
+                                <button class="action-btn">Editar</button>
+                                <button class="action-btn">Ver</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Formulario Nueva Cotización -->
+            <div class="form-section" id="nuevaCotizacionForm" style="display: none;">
+                <h3 class="section-title">Nueva Cotización</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Cliente</label>
+                        <select class="form-select">
+                            <option>Seleccionar cliente...</option>
+                            <option>HomeDeco S.A.</option>
+                            <option>TecniCorp</option>
+                            <option>Boutique Moda</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Proveedor</label>
+                        <select class="form-select">
+                            <option>Seleccionar proveedor...</option>
+                            <option>China Import Co.</option>
+                            <option>EuroGoods GmbH</option>
+                            <option>USA Trade Inc.</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Incoterm</label>
+                        <select class="form-select">
+                            <option>FOB - Free On Board</option>
+                            <option>CIF - Cost Insurance Freight</option>
+                            <option>EXW - Ex Works</option>
+                            <option>DDP - Delivered Duty Paid</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Producto/Descripción</label>
+                        <input type="text" class="form-input" placeholder="Descripción detallada">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cantidad</label>
+                        <input type="number" class="form-input" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Precio Unitario (USD)</label>
+                        <input type="number" class="form-input" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Observaciones</label>
+                    <textarea class="form-textarea" placeholder="Notas adicionales..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-primary">Guardar Cotización</button>
+                    <button class="btn" onclick="hideNuevaCotizacion()" style="background: rgba(255,255,255,0.05); color: var(--text);">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Proveedores -->
+        <div class="screen" id="proveedoresScreen">
+            <div class="dashboard-header">
+                <h2 class="screen-title">Registro de Proveedores</h2>
+                <button class="btn btn-primary" onclick="showNuevoProveedor()">Nuevo Proveedor</button>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>País</th>
+                            <th>Contacto</th>
+                            <th>Productos</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>China Import Co.</td>
+                            <td>China</td>
+                            <td>Zhang Wei - zhang@chinaimport.co</td>
+                            <td>Electrónicos, Textiles</td>
+                            <td><span class="status-badge status-aprobada">Activo</span></td>
+                            <td>
+                                <button class="action-btn">Editar</button>
+                                <button class="action-btn">Contactar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>EuroGoods GmbH</td>
+                            <td>Alemania</td>
+                            <td>Hans Müller - hans@eurogoods.de</td>
+                            <td>Maquinaria, Herramientas</td>
+                            <td><span class="status-badge status-aprobada">Activo</span></td>
+                            <td>
+                                <button class="action-btn">Editar</button>
+                                <button class="action-btn">Contactar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Formulario Nuevo Proveedor -->
+            <div class="form-section" id="nuevoProveedorForm" style="display: none;">
+                <h3 class="section-title">Registrar Nuevo Proveedor</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Nombre Empresa</label>
+                        <input type="text" class="form-input" placeholder="Nombre legal">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">País</label>
+                        <select class="form-select">
+                            <option>Seleccionar país...</option>
+                            <option>China</option>
+                            <option>Estados Unidos</option>
+                            <option>Alemania</option>
+                            <option>Japón</option>
+                            <option>Corea del Sur</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Persona de Contacto</label>
+                        <input type="text" class="form-input" placeholder="Nombre completo">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" placeholder="email@empresa.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" class="form-input" placeholder="+...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Productos/Servicios</label>
+                        <input type="text" class="form-input" placeholder="Descripción de productos">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-primary">Registrar Proveedor</button>
+                    <button class="btn" onclick="hideNuevoProveedor()" style="background: rgba(255,255,255,0.05); color: var(--text);">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Incoterms -->
+        <div class="screen" id="incotermsScreen">
+            <div class="dashboard-header">
+                <h2 class="screen-title">Gestión de Incoterms</h2>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Seleccionar Incoterm</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Término Comercial</label>
+                        <select class="form-select">
+                            <option>FOB - Free On Board</option>
+                            <option>CIF - Cost Insurance Freight</option>
+                            <option>EXW - Ex Works</option>
+                            <option>FCA - Free Carrier</option>
+                            <option>CPT - Carriage Paid To</option>
+                            <option>CIP - Carriage and Insurance Paid</option>
+                            <option>DAP - Delivered at Place</option>
+                            <option>DPU - Delivered at Place Unloaded</option>
+                            <option>DDP - Delivered Duty Paid</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Lugar de Entrega</label>
+                        <input type="text" class="form-input" placeholder="Puerto/Aeropuerto/Ciudad">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Responsabilidades del Vendedor</label>
+                    <textarea class="form-textarea" placeholder="Descripción de responsabilidades..." readonly style="background: rgba(255,255,255,0.02);">
+FOB: El vendedor entrega la mercancía a bordo del buque en el puerto de embarque convenido.
+                    </textarea>
+                </div>
+                <button class="btn btn-primary">Aplicar Incoterm</button>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Incoterms Más Utilizados</h3>
+                <div style="display: grid; gap: 15px;">
+                    <div style="padding: 15px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 4px solid var(--primary);">
+                        <div style="font-weight: 600; margin-bottom: 5px;">FOB - Free On Board</div>
+                        <div style="font-size: 13px; color: var(--muted);">El vendedor entrega cuando la mercancía sobrepasa la borda del buque</div>
+                    </div>
+                    <div style="padding: 15px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 4px solid var(--primary);">
+                        <div style="font-weight: 600; margin-bottom: 5px;">CIF - Cost Insurance Freight</div>
+                        <div style="font-size: 13px; color: var(--muted);">El vendedor paga el flete y seguro hasta el puerto de destino</div>
+                    </div>
+                    <div style="padding: 15px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 4px solid var(--primary);">
+                        <div style="font-weight: 600; margin-bottom: 5px;">EXW - Ex Works</div>
+                        <div style="font-size: 13px; color: var(--muted);">El comprador asume todos los costos y riesgos desde el local del vendedor</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Navegación entre pestañas
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const screenId = this.getAttribute('data-screen') + 'Screen';
+                
+                // Actualizar pestañas activas
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Mostrar pantalla correspondiente
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+                document.getElementById(screenId).classList.add('active');
+            });
+        });
+
+        // Funciones para mostrar/ocultar formularios
+        function showNuevaCotizacion() {
+            document.getElementById('nuevaCotizacionForm').style.display = 'block';
+        }
+
+        function hideNuevaCotizacion() {
+            document.getElementById('nuevaCotizacionForm').style.display = 'none';
+        }
+
+        function showNuevoProveedor() {
+            document.getElementById('nuevoProveedorForm').style.display = 'block';
+        }
+
+        function hideNuevoProveedor() {
+            document.getElementById('nuevoProveedorForm').style.display = 'none';
+        }
+
+        // Efectos visuales
+        document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
