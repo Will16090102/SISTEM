@@ -1,1 +1,1191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador - SeaGroup Importaciones</title>
+    <style>
+        :root {
+            --primary: #ef4444;
+            --primary-dark: #dc2626;
+            --bg: #0f1724;
+            --card: #0b1220;
+            --text: #e6eef6;
+            --muted: #9ca3af;
+            --border: rgba(255, 255, 255, 0.05);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #06b6d4;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(11, 18, 32, 0.95);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 20px;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), #dc2626);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .logo-text h1 {
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Navegación */
+        .nav-tabs {
+            background: rgba(11, 18, 32, 0.9);
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 5px;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 15px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Contenido Principal */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Dashboard */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .screen-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        /* KPIs Grid */
+        .kpis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .kpi-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .kpi-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .kpi-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .kpi-trend {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--primary);
+        }
+
+        /* Formularios */
+        .form-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        /* Tablas */
+        .table-container {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--primary);
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .role-badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .role-ventas { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .role-logistica { background: rgba(6, 182, 212, 0.2); color: #06b6d4; }
+        .role-facturacion { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .role-admin { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .role-cliente { background: rgba(139, 92, 246, 0.2); color: #8b5cf6; }
+
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Sistema de Alertas */
+        .alerts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .alert-warning {
+            border-left-color: var(--warning);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .alert-danger {
+            border-left-color: var(--primary);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .alert-info {
+            border-left-color: var(--info);
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 5px;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .alert-time {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .alert-message {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        /* Configuración de Módulos */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .module-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .module-card:hover {
+            border-color: var(--primary);
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .module-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .module-description {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 15px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid, .kpis-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .table-container {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">SG</div>
+                <div class="logo-text">
+                    <h1>SeaGroup Administrador</h1>
+                    <p>Panel de Control del Sistema</p>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">A</div>
+                <div>
+                    <div style="font-weight: 600;">Administrador</div>
+                    <div style="font-size: 12px; color: var(--muted);">Super Usuario</div>
+                </div>
+                <button class="btn-logout" onclick="window.location.href='index.html'">Cerrar Sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navegación -->
+    <nav class="nav-tabs">
+        <div class="nav-container">
+            <div class="nav-tab active" data-screen="dashboard">Dashboard</div>
+            <div class="nav-tab" data-screen="usuarios">Gestión de Usuarios</div>
+            <div class="nav-tab" data-screen="modulos">Configuración de Módulos</div>
+            <div class="nav-tab" data-screen="sistema">Monitor del Sistema</div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <!-- Dashboard -->
+        <div class="screen active" id="dashboardScreen">
+            <div class="dashboard-header">
+                <h2 class="screen-title">Dashboard Administrativo</h2>
+                <div class="badge">Super Usuario</div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">24</div>
+                    <div class="stat-label">Usuarios Activos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">Operaciones Totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$2.8M</div>
+                    <div class="stat-label">Facturación Anual</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">98.2%</div>
+                    <div class="stat-label">Uptime Sistema</div>
+                </div>
+            </div>
+
+            <div class="kpis-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Eficiencia Operativa</div>
+                        <div class="kpi-trend trend-up">↑ 12%</div>
+                    </div>
+                    <div class="kpi-value">87.5%</div>
+                    <div style="font-size: 13px; color: var(--muted); margin-top: 8px;">
+                        Mejora en tiempo de procesamiento
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Satisfacción Cliente</div>
+                        <div class="kpi-trend trend-up">↑ 5%</div>
+                    </div>
+                    <div class="kpi-value">4.8/5.0</div>
+                    <div style="font-size: 13px; color: var(--muted); margin-top: 8px;">
+                        Basado en 145 encuestas
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Tasa de Retención</div>
+                        <div class="kpi-trend trend-down">↓ 2%</div>
+                    </div>
+                    <div class="kpi-value">92%</div>
+                    <div style="font-size: 13px; color: var(--muted); margin-top: 8px;">
+                        Clientes activos últimos 12 meses
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Alertas del Sistema</h3>
+                <div class="alerts-container">
+                    <div class="alert alert-warning">
+                        <div class="alert-header">
+                            <div class="alert-title">Backup Pendiente</div>
+                            <div class="alert-time">Hace 2 días</div>
+                        </div>
+                        <div class="alert-message">El backup automático no se ejecutó en la última programación</div>
+                    </div>
+
+                    <div class="alert alert-danger">
+                        <div class="alert-header">
+                            <div class="alert-title">Alto Uso de CPU</div>
+                            <div class="alert-time">Hace 15 min</div>
+                        </div>
+                        <div class="alert-message">El servidor de base de datos está al 95% de capacidad</div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <div class="alert-header">
+                            <div class="alert-title">Actualización Disponible</div>
+                            <div class="alert-time">Hoy</div>
+                        </div>
+                        <div class="alert-message">Nueva versión v2.1.5 disponible para instalación</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gestión de Usuarios -->
+        <div class="screen" id="usuariosScreen">
+            <div class="dashboard-header">
+                <h2 class="screen-title">Gestión de Usuarios</h2>
+                <button class="btn btn-primary" onclick="showNuevoUsuario()">Nuevo Usuario</button>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Último Acceso</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>admin</td>
+                            <td>Administrador Sistema</td>
+                            <td>admin@seagroup.com</td>
+                            <td><span class="role-badge role-admin">Administrador</span></td>
+                            <td>28/10/2024 14:30</td>
+                            <td><span class="status-badge status-active">Activo</span></td>
+                            <td>
+                                <button class="action-btn">Editar</button>
+                                <button class="action-btn">Reiniciar Pass</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ventas01</td>
+                            <td>María López</td>
+                            <td>mlopez@seagroup.com</td>
+                            <td><span class="role-badge role-ventas">Ventas</span></td>
+                            <td>28/10/2024 11:15</td>
+                            <td><span class="status-badge status-active">Activo</span></td>
+                            <td>
+                                <button class="action-btn">Editar</button>
+                                <button class="action-btn">Reiniciar Pass</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>logistica02</td>
+                            <td>Carlos Rodríguez</td>
+                            <td>crodriguez@seagroup.com</td>
+                            <td><span class="role-badge role-logistica">Logística</span></td>
+                            <td>27/10/2024 16:45</td>
+                            <td><span class="status-badge status-active">Activo</span></td>
+                            <td>
+                                <button class="action-btn">Editar</button>
+                                <button class="action-btn">Reiniciar Pass</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>facturacion01</td>
+                            <td>Ana García</td>
+                            <td>agarcia@seagroup.com</td>
+                            <td><span class="role-badge role-facturacion">Facturación</span></td>
+                            <td>28/10/2024 09:20</td>
+                            <td><span class="status-badge status-active">Activo</span></td>
+                            <td>
+                                <button class="action-btn">Editar</button>
+                                <button class="action-btn">Reiniciar Pass</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>cliente_tecnicorp</td>
+                            <td>TecniCorp S.A.</td>
+                            <td>contacto@tecnicorp.com</td>
+                            <td><span class="role-badge role-cliente">Cliente</span></td>
+                            <td>26/10/2024 10:30</td>
+                            <td><span class="status-badge status-inactive">Inactivo</span></td>
+                            <td>
+                                <button class="action-btn">Editar</button>
+                                <button class="action-btn">Activar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Formulario Nuevo Usuario -->
+            <div class="form-section" id="nuevoUsuarioForm" style="display: none;">
+                <h3 class="section-title">Crear Nuevo Usuario</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Nombre de Usuario</label>
+                        <input type="text" class="form-input" placeholder="Ej: usuario01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nombre Completo</label>
+                        <input type="text" class="form-input" placeholder="Nombre y apellidos">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" placeholder="usuario@empresa.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Rol</label>
+                        <select class="form-select">
+                            <option value="ventas">Ventas</option>
+                            <option value="logistica">Logística</option>
+                            <option value="facturacion">Facturación</option>
+                            <option value="admin">Administrador</option>
+                            <option value="cliente">Cliente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contraseña Temporal</label>
+                        <input type="password" class="form-input" value="Temp123456">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirmar Contraseña</label>
+                        <input type="password" class="form-input" value="Temp123456">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Permisos Especiales</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
+                        <label style="display: flex; align-items: center; gap: 5px; font-size: 13px;">
+                            <input type="checkbox"> Acceso a reportes avanzados
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; font-size: 13px;">
+                            <input type="checkbox"> Exportación de datos
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; font-size: 13px;">
+                            <input type="checkbox"> Modificación de clientes
+                        </label>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-primary">Crear Usuario</button>
+                    <button class="btn btn-secondary" onclick="hideNuevoUsuario()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuración de Módulos -->
+        <div class="screen" id="modulosScreen">
+            <div class="dashboard-header">
+                <h2 class="screen-title">Configuración del Sistema</h2>
+                <button class="btn btn-primary" onclick="guardarConfiguracion()">Guardar Cambios</button>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Módulos del Sistema</h3>
+                <div class="modules-grid">
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-title">Módulo de Ventas</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="module-description">
+                            Gestión de cotizaciones, proveedores y términos comerciales
+                        </div>
+                        <div style="font-size: 12px; color: var(--muted);">
+                            5 usuarios activos
+                        </div>
+                    </div>
+
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-title">Módulo Logístico</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="module-description">
+                            Seguimiento de embarques, ETA y operaciones en tránsito
+                        </div>
+                        <div style="font-size: 12px; color: var(--muted);">
+                            3 usuarios activos
+                        </div>
+                    </div>
+
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-title">Módulo de Facturación</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="module-description">
+                            Gestión de facturas, liquidaciones y reportes financieros
+                        </div>
+                        <div style="font-size: 12px; color: var(--muted);">
+                            2 usuarios activos
+                        </div>
+                    </div>
+
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-title">Portal de Clientes</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="module-description">
+                            Acceso para clientes para seguimiento de sus operaciones
+                        </div>
+                        <div style="font-size: 12px; color: var(--muted);">
+                            15 clientes activos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Configuración General</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Nombre de la Empresa</label>
+                        <input type="text" class="form-input" value="SeaGroup Importaciones S.A.">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Moneda Principal</label>
+                        <select class="form-select">
+                            <option>USD - Dólar Americano</option>
+                            <option>EUR - Euro</option>
+                            <option selected>PEN - Sol Peruano</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Zona Horaria</label>
+                        <select class="form-select">
+                            <option selected>America/Lima (UTC-5)</option>
+                            <option>America/New_York (UTC-4)</option>
+                            <option>Europe/Madrid (UTC+2)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Idioma</label>
+                        <select class="form-select">
+                            <option selected>Español</option>
+                            <option>English</option>
+                            <option>Português</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Configuración de Seguridad</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Duración de Sesión (minutos)</label>
+                        <input type="number" class="form-input" value="120">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Intentos de Login Permitidos</label>
+                        <input type="number" class="form-input" value="3">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Caducidad de Contraseñas (días)</label>
+                        <input type="number" class="form-input" value="90">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                        <input type="checkbox" checked> Requerir contraseña compleja
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                        <input type="checkbox"> Autenticación de dos factores
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monitor del Sistema -->
+        <div class="screen" id="sistemaScreen">
+            <div class="dashboard-header">
+                <h2 class="screen-title">Monitor del Sistema</h2>
+                <button class="btn btn-primary" onclick="actualizarMetricas()">Actualizar</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">98.2%</div>
+                    <div class="stat-label">Disponibilidad</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">45%</div>
+                    <div class="stat-label">Uso de CPU</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">68%</div>
+                    <div class="stat-label">Uso de Memoria</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2.3 GB</div>
+                    <div class="stat-label">Espacio Disco</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Actividad en Tiempo Real</h3>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Acción</th>
+                                <th>Módulo</th>
+                                <th>Timestamp</th>
+                                <th>IP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ventas01</td>
+                                <td>Creó cotización COT-2024-025</td>
+                                <td>Ventas</td>
+                                <td>28/10/2024 14:35:12</td>
+                                <td>192.168.1.45</td>
+                            </tr>
+                            <tr>
+                                <td>logistica02</td>
+                                <td>Actualizó estado de IMP-2024-015</td>
+                                <td>Logística</td>
+                                <td>28/10/2024 14:28:45</td>
+                                <td>192.168.1.67</td>
+                            </tr>
+                            <tr>
+                                <td>facturacion01</td>
+                                <td>Generó factura FAC-2024-018</td>
+                                <td>Facturación</td>
+                                <td>28/10/2024 14:15:33</td>
+                                <td>192.168.1.89</td>
+                            </tr>
+                            <tr>
+                                <td>cliente_homedeco</td>
+                                <td>Consultó estado de operación</td>
+                                <td>Portal Clientes</td>
+                                <td>28/10/2024 14:10:21</td>
+                                <td>201.240.34.156</td>
+                            </tr>
+                            <tr>
+                                <td>admin</td>
+                                <td>Accedió al panel administrativo</td>
+                                <td>Administración</td>
+                                <td>28/10/2024 14:05:18</td>
+                                <td>192.168.1.1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Base de Datos</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Tamaño Total</label>
+                        <div style="padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                            2.8 GB / 10 GB
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Último Backup</label>
+                        <div style="padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                            26/10/2024 02:00
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Próximo Backup</label>
+                        <div style="padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                            29/10/2024 02:00
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-primary">Ejecutar Backup Manual</button>
+                    <button class="btn btn-secondary">Optimizar Base de Datos</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Navegación entre pestañas
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const screenId = this.getAttribute('data-screen') + 'Screen';
+                
+                // Actualizar pestañas activas
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Mostrar pantalla correspondiente
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+                document.getElementById(screenId).classList.add('active');
+            });
+        });
+
+        // Funciones específicas del módulo administrativo
+        function showNuevoUsuario() {
+            document.getElementById('nuevoUsuarioForm').style.display = 'block';
+        }
+
+        function hideNuevoUsuario() {
+            document.getElementById('nuevoUsuarioForm').style.display = 'none';
+        }
+
+        function guardarConfiguracion() {
+            alert('Configuración guardada exitosamente');
+            // En una implementación real, aquí se guardaría la configuración en la base de datos
+        }
+
+        function actualizarMetricas() {
+            alert('Métricas del sistema actualizadas');
+            // En una implementación real, aquí se actualizarían las métricas en tiempo real
+        }
+
+        // Simular métricas en tiempo real
+        function simularMetricas() {
+            const metricas = document.querySelectorAll('.stat-value');
+            metricas.forEach(metrica => {
+                const valorActual = parseInt(metrica.textContent);
+                if (!isNaN(valorActual)) {
+                    const variacion = Math.random() * 5 - 2.5; // Variación de -2.5% a +2.5%
+                    const nuevoValor = Math.max(0, valorActual + variacion);
+                    metrica.textContent = nuevoValor.toFixed(1) + '%';
+                }
+            });
+        }
+
+        // Actualizar métricas cada 30 segundos
+        setInterval(simularMetricas, 30000);
+
+        // Efectos visuales
+        document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Gestión de toggle switches
+        document.querySelectorAll('.toggle-switch input').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const moduleCard = this.closest('.module-card');
+                if (this.checked) {
+                    moduleCard.style.borderColor = 'var(--primary)';
+                } else {
+                    moduleCard.style.borderColor = 'var(--border)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
